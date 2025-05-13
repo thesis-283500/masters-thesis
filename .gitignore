@@ -1,0 +1,4 @@
+s3_exporter/s3_exporter
+s3_exporter/bin/**
+s3_exporter/*.tar.gz
+credentials
