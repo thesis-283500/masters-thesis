@@ -33,6 +33,6 @@ data:
         auth_password: Testing123
     - name: slack_demo
       slack_configs:
-      - api_url: https://hooks.slack.com/services/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
+      - api_url: https://hooks.slack.com/services/<token>
         channel: '#auto-deploy-nodejs-app'
         text: <https://github.com/WUST-Projects/ITAPP_THU0730_FleetmanVehicleReliabilityandMTTDSystem/blob/main/prometheus/alert-manager/runbook.md|Runbook URL>
