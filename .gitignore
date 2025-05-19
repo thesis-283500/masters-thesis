@@ -1,4 +1,4 @@
-s3_exporter/s3_exporter
-s3_exporter/bin/**
+s3_exporter/config/config.jamotion.yml
+s3_exporter/.idea/
 s3_exporter/*.tar.gz
 credentials
