@@ -1,2 +1,25 @@
-s3-exporter/config/config.jamotion.yml
-s3-exporter/.idea/
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+s3bucket_exporter/*.exe
+s3bucket_exporter/*.exe~
+s3bucket_exporter/*.dll
+s3bucket_exporter/*.so
+s3bucket_exporter/*.dylib
+
+# Test binary, built with `go test -c`
+s3bucket_exporter/*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+s3bucket_exporter/*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+s3bucket_exporter/go.work
+
+# molu8bits
+s3bucket_exporter/s3bucket_exporter
+

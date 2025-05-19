@@ -1,4 +1,0 @@
-s3cmd
-prometheus_client
-pyYAML
-python-dateutil
