@@ -13,3 +13,4 @@
 - [How to setup eks cluster using terraform](https://developer.hashicorp.com/terraform/tutorials/kubernetes/eks)
 - [Monitoring cloud carbon footprint using kepler](https://grafana.com/blog/2024/04/22/going-green-how-to-monitor-your-cloud-carbon-footprint-using-kepler-prometheus-and-grafana/)
 - [How to setup self hosted runners]()
+- [How to install cert-manager](https://cert-manager.io/docs/installation/)
