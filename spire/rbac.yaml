@@ -1,0 +1,273 @@
+---
+# Source: spire/charts/spire-server/templates/roles.yaml
+# ClusterRole to allow spire-server node attestor to query Token Review API
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-spire-server
+rules:
+  - apiGroups: [authentication.k8s.io]
+    resources: [tokenreviews]
+    verbs:
+      - get
+      - watch
+      - list
+      - create
+  - apiGroups: [""]
+    resources: [nodes, pods]
+    verbs:
+      - get
+      - list
+---
+# Source: spire/charts/spire-agent/templates/roles.yaml
+# Binds above cluster role to spire-agent service account
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: "spire-server-agent"
+subjects:
+  - kind: ServiceAccount
+    name: "spire-server-agent"
+    namespace: "spire-server"
+roleRef:
+  kind: ClusterRole
+  name: "spire-server-agent"
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spire-server/templates/controller-manager-roles.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spire-server-spire-controller-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spire-server-spire-controller-manager
+
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire-server
+---
+# Source: spire/charts/spire-server/templates/roles.yaml
+# Binds above cluster role to spire-server service account
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-spire-server
+
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire-server
+roleRef:
+  kind: ClusterRole
+  name: spire-server-spire-server
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spire-server/templates/controller-manager-roles.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spire-controller-manager-leader-election
+  namespace: spire-server
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+---
+# Source: spire/charts/spire-server/templates/roles.yaml
+# Role to be able to push certificate bundles to a configmap
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-bundle
+  namespace: spire-server
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames: [spire-bundle]
+    verbs:
+      - get
+      - patch
+---
+# Source: spire/charts/spire-server/templates/controller-manager-roles.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spire-controller-manager-leader-election
+  namespace: spire-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spire-controller-manager-leader-election
+
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire-server
+---
+# Source: spire/charts/spire-server/templates/roles.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-bundle
+  namespace: spire-server
+
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire-server
+roleRef:
+  kind: Role
+  name: spire-bundle
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spiffe-oidc-discovery-provider/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: spire-server-spiffe-oidc-discovery-provider
+  namespace: spire-server
+spec:
+  type: ClusterIP
+  ports:
+    - name: https
+      port: 443
+      targetPort: https
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: spiffe-oidc-discovery-provider
+    app.kubernetes.io/instance: spire-server
+---
+# Source: spire/charts/spire-server/templates/post-install-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spire-server-post-install
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+rules:
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    resourceNames: ["spire-server-spire-controller-manager-webhook"]
+    verbs: ["get", "patch"]
+---
+# Source: spire/charts/spire-server/templates/post-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spire-server-post-upgrade
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+rules:
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    resourceNames: ["spire-server-spire-controller-manager-webhook"]
+    verbs: ["get", "patch"]
+---
+# Source: spire/charts/spire-server/templates/pre-upgrade-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spire-server-pre-upgrade
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+rules:
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    resourceNames: ["spire-server-spire-controller-manager-webhook"]
+    verbs: ["get", "patch"]
+---
+# Source: spire/charts/spire-server/templates/post-install-hook.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-post-install
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+subjects:
+  - kind: ServiceAccount
+    name: spire-server-post-install
+    namespace: spire-server
+roleRef:
+  kind: ClusterRole
+  name: spire-server-post-install
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spire-server/templates/post-upgrade-hook.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-post-upgrade
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+subjects:
+  - kind: ServiceAccount
+    name: spire-server-post-upgrade
+    namespace: spire-server
+roleRef:
+  kind: ClusterRole
+  name: spire-server-post-upgrade
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spire-server/templates/pre-upgrade-hook.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-pre-upgrade
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+subjects:
+  - kind: ServiceAccount
+    name: spire-server-pre-upgrade
+    namespace: spire-server
+roleRef:
+  kind: ClusterRole
+  name: spire-server-pre-upgrade
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: spire/charts/spiffe-oidc-discovery-provider/templates/pre-delete-hook.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spire-server-spiffe-oidc-discovery-provider-pre-delete
+  namespace: spire-server
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames: ["spire-server-spiffe-oidc-discovery-provider"]
+    verbs: ["get", "delete"]
+---
+# Source: spire/charts/spiffe-oidc-discovery-provider/templates/pre-delete-hook.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-spiffe-oidc-discovery-provider-pre-delete
+  namespace: spire-server
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+subjects:
+  - kind: ServiceAccount
+    name: spire-server-spiffe-oidc-discovery-provider-pre-delete
+    namespace: spire-server
+roleRef:
+  kind: Role
+  name: spire-server-spiffe-oidc-discovery-provider-pre-delete
+  apiGroup: rbac.authorization.k8s.io

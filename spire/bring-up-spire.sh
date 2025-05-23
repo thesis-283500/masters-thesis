@@ -1,17 +1,11 @@
-#/bin/bash
+#!/bin/bash
 
-. ../config.sh
+kubectl create ns spire-server >/dev/null 2>&1
 
-# set -e
-
-kubectl config use-context ${CLUSTER1_CTX}
-kubectl create ns istio-system || echo "Namespace already exist"
-until kubectl apply -f ./crds.yaml; do sleep 3; done
-
-echo "sleeping..."
-sleep 30
-kubectl apply -f ./spire-backend.yaml
-
-echo "sleeping..."
-sleep 30
-kubectl apply -f ./spiffe-id-backend.yaml
+kubectl apply -f spire-crd.yaml
+kubectl apply -f service-accounts.yaml
+kubectl apply -f configmaps.yaml
+kubectl apply -f services.yaml
+kubectl apply -f rbac.yaml
+kubectl apply -f webhooks.yaml
+kubectl apply -f csi-daemon.yaml

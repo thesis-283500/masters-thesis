@@ -1,3 +1,5 @@
 # Ignore terraform files
 terraform/**/.terraform
 terraform/**/.terraform.lock.*
+# Ignore github app secret config
+action-runner/app-secret.yaml

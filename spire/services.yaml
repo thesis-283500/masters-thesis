@@ -1,0 +1,46 @@
+---
+# Source: spire/charts/spire-server/templates/controller-manager-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: spire-controller-manager-webhook
+  namespace: spire-server
+  labels:
+    helm.sh/chart: spire-server-0.1.0
+    app.kubernetes.io/name: server
+    app.kubernetes.io/instance: spire-server
+    app.kubernetes.io/version: "1.12.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: https
+      port: 443
+      targetPort: https
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: server
+    app.kubernetes.io/instance: spire-server
+---
+# Source: spire/charts/spire-server/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: spire-server
+  namespace: spire-server
+  labels:
+    helm.sh/chart: spire-server-0.1.0
+    app.kubernetes.io/name: server
+    app.kubernetes.io/instance: spire-server
+    app.kubernetes.io/version: "1.12.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: grpc
+      port: 443
+      targetPort: grpc
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: server
+    app.kubernetes.io/instance: spire-server

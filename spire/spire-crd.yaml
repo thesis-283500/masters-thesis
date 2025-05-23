@@ -1,10 +1,11 @@
 ---
-# ClusterFederatedTrustDomains CRD.
+# Source: spire-crds/templates/spire.spiffe.io_clusterfederatedtrustdomains.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.8.0
+    controller-gen.kubebuilder.io/version: v0.11.1
+    helm.sh/resource-policy: keep
   creationTimestamp: null
   name: clusterfederatedtrustdomains.spire.spiffe.io
 spec:
@@ -65,6 +66,9 @@ spec:
                 description: BundleEndpointURL is the URL of the bundle endpoint.
                   It must be an HTTPS URL and cannot contain userinfo (i.e. username/password).
                 type: string
+              className:
+                description: Set the class of controller to handle this object.
+                type: string
               trustDomain:
                 description: TrustDomain is the name of the trust domain to federate
                   with (e.g. example.org)
@@ -95,14 +99,14 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
-# ClusterSPIFFEID CRD.
+# Source: spire-crds/templates/spire.spiffe.io_clusterspiffeids.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.8.0
+    controller-gen.kubebuilder.io/version: v0.11.1
+    helm.sh/resource-policy: keep
   creationTimestamp: null
   name: clusterspiffeids.spire.spiffe.io
 spec:
@@ -139,6 +143,15 @@ spec:
                   access the SPIRE administrative APIs. Extra care should be taken
                   to only apply this SPIFFE ID to admin workloads.
                 type: boolean
+              autoPopulateDNSNames:
+                description: AutoPopulateDNSNames indicates whether or not to auto
+                  populate service DNS names.
+                type: boolean
+              fallback:
+                description: |-
+                  Apply this ID only if there are no other matching non fallback
+                  ClusterSPIFFEIDs
+                type: boolean
               dnsNameTemplates:
                 description: DNSNameTemplate represents templates for extra DNS names
                   that are applicable to SVIDs minted for this ClusterSPIFFEID. The
@@ -148,14 +161,25 @@ spec:
                   type: string
                 type: array
               downstream:
-                description: Downstream indicates that the entry describes a downstream SPIRE server.
+                description: Downstream indicates that the entry describes a downstream
+                  SPIRE server.
                 type: boolean
+              className:
+                description: Set the class of controller to handle this object.
+                type: string
               federatesWith:
                 description: FederatesWith is a list of trust domain names that workloads
                   that obtain this SPIFFE ID will federate with.
                 items:
                   type: string
                 type: array
+              hint:
+                description: Set the entry hint
+                type: string
+              jwtTtl:
+                description: JWTTTL indicates an upper-bound time-to-live for JWT
+                  SVIDs minted for this ClusterSPIFFEID.
+                type: string
               namespaceSelector:
                 description: NamespaceSelector selects the namespaces that are targeted
                   by this CRD.
@@ -201,6 +225,7 @@ spec:
                       are ANDed.
                     type: object
                 type: object
+                x-kubernetes-map-type: atomic
               podSelector:
                 description: PodSelector selects the pods that are targeted by this
                   CRD.
@@ -246,14 +271,15 @@ spec:
                       are ANDed.
                     type: object
                 type: object
+                x-kubernetes-map-type: atomic
               spiffeIDTemplate:
                 description: SPIFFEID is the SPIFFE ID template. The node and pod
                   spec are made available to the template under .NodeSpec, .PodSpec
                   respectively.
                 type: string
               ttl:
-                description: TTL indicates an upper-bound time-to-live for SVIDs minted
-                  for this ClusterSPIFFEID. If unset, a default will be chosen.
+                description: TTL indicates an upper-bound time-to-live for X509 SVIDs
+                  minted for this ClusterSPIFFEID. If unset, a default will be chosen.
                 type: string
               workloadSelectorTemplates:
                 description: WorkloadSelectorTemplates are templates to produce arbitrary
@@ -321,40 +347,107 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
-
 ---
-# ValidatingWebhookConfiguration for validating ClusterSPIFFEID and
-# ClusterFederatedTrustDomain custom resources.
-apiVersion: admissionregistration.k8s.io/v1
-kind: ValidatingWebhookConfiguration
+# Source: spire-crds/templates/spire.spiffe.io_clusterstaticentries.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
 metadata:
-  name: spire-controller-manager-webhook
-webhooks:
-  - admissionReviewVersions: ["v1"]
-    clientConfig:
-      service:
-        name: spire-controller-manager-webhook-service
-        namespace: spire
-        path: /validate-spire-spiffe-io-v1alpha1-clusterfederatedtrustdomain
-    failurePolicy: Fail
-    name: vclusterfederatedtrustdomain.kb.io
-    rules:
-      - apiGroups: ["spire.spiffe.io"]
-        apiVersions: ["v1alpha1"]
-        operations: ["CREATE", "UPDATE"]
-        resources: ["clusterfederatedtrustdomains"]
-    sideEffects: None
-  - admissionReviewVersions: ["v1"]
-    clientConfig:
-      service:
-        name: spire-controller-manager-webhook-service
-        namespace: spire
-        path: /validate-spire-spiffe-io-v1alpha1-clusterspiffeid
-    failurePolicy: Fail
-    name: vclusterspiffeid.kb.io
-    rules:
-      - apiGroups: ["spire.spiffe.io"]
-        apiVersions: ["v1alpha1"]
-        operations: ["CREATE", "UPDATE"]
-        resources: ["clusterspiffeids"]
-    sideEffects: None
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.11.1
+    helm.sh/resource-policy: keep
+  creationTimestamp: null
+  name: clusterstaticentries.spire.spiffe.io
+spec:
+  group: spire.spiffe.io
+  names:
+    kind: ClusterStaticEntry
+    listKind: ClusterStaticEntryList
+    plural: clusterstaticentries
+    singular: clusterstaticentry
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ClusterStaticEntry is the Schema for the clusterstaticentries
+          API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ClusterStaticEntrySpec defines the desired state of ClusterStaticEntry
+            properties:
+              admin:
+                type: boolean
+              className:
+                description: Set the class of controller to handle this object.
+                type: string
+              dnsNames:
+                items:
+                  type: string
+                type: array
+              downstream:
+                type: boolean
+              federatesWith:
+                items:
+                  type: string
+                type: array
+              hint:
+                type: string
+              jwtSVIDTTL:
+                type: string
+              parentID:
+                type: string
+              selectors:
+                items:
+                  type: string
+                type: array
+              spiffeID:
+                type: string
+              storeSVID:
+                type: boolean
+              x509SVIDTTL:
+                type: string
+            required:
+            - parentID
+            - selectors
+            - spiffeID
+            type: object
+          status:
+            description: ClusterStaticEntryStatus defines the observed state of ClusterStaticEntry
+            properties:
+              masked:
+                description: If the static entry was masked by another entry.
+                type: boolean
+              rendered:
+                description: If the static entry rendered properly.
+                type: boolean
+              set:
+                description: If the static entry was successfully created/updated.
+                type: boolean
+            required:
+            - masked
+            - rendered
+            - set
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

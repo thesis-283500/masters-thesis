@@ -4,14 +4,14 @@
 DIR=$(git rev-parse --show-toplevel)
 
 #multi-network clusters
-CLUSTER1_NAME=monitoring-system
+# CLUSTER1_NAME=monitoring-system
 # CLUSTER2_NAME=backend
 # CLUSTER3_NAME=clu3
 # CLUSTER4_NAME=clu4
 # CLUSTER5_NAME=clu5
 # CLUSTER6_NAME=clu6
 
-CLUSTER1_CTX=kind-monitoring-system
+# CLUSTER1_CTX=kind-monitoring-system
 # CLUSTER2_CTX=kind-backend
 # CLUSTER3_CTX=kind-clu3
 # CLUSTER4_CTX=kind-clu4

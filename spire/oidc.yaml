@@ -1,0 +1,220 @@
+---
+# Source: spire/charts/spiffe-oidc-discovery-provider/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spire-server-spiffe-oidc-discovery-provider
+  namespace: spire-server
+  labels:
+    helm.sh/chart: spiffe-oidc-discovery-provider-0.1.0
+    app.kubernetes.io/name: spiffe-oidc-discovery-provider
+    app.kubernetes.io/instance: spire-server
+    app.kubernetes.io/version: "1.12.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spiffe-oidc-discovery-provider
+      app.kubernetes.io/instance: spire-server
+  template:
+    metadata:
+      annotations:
+        checksum/config: 621c1365a78200bd8f3957741797b1ee4e9696407124eb72318ac57ffa8322b4
+      labels:
+        app.kubernetes.io/name: spiffe-oidc-discovery-provider
+        app.kubernetes.io/instance: spire-server
+        release: spire-server
+        release-namespace: spire-server
+        component: oidc-discovery-provider
+    spec:
+      serviceAccountName: spire-server-spiffe-oidc-discovery-provider
+      securityContext:
+        runAsGroup: 1000
+        runAsUser: 1000
+      initContainers:
+        - name: init
+          securityContext:
+            {}
+          resources:
+            {}
+          image: "ghcr.io/spiffe/spiffe-helper:0.10.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config
+            - /etc/spiffe-helper.conf
+            - -daemon-mode=false
+          volumeMounts:
+            - name: spiffe-workload-api
+              mountPath: /spiffe-workload-api
+              readOnly: true
+            - name: spire-oidc-config
+              mountPath: /etc/spiffe-helper.conf
+              subPath: spiffe-helper.conf
+              readOnly: true
+            - name: certdir
+              mountPath: /certs
+      containers:
+        - name: spiffe-oidc-discovery-provider
+          securityContext:
+            {}
+          image: "ghcr.io/spiffe/oidc-discovery-provider:1.12.2"
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config
+            - /run/spire/oidc/config/oidc-discovery-provider.conf
+          ports:
+            - containerPort: 8008
+              name: healthz
+            - containerPort: 8443
+              name: https
+          volumeMounts:
+            - name: spiffe-workload-api
+              mountPath: /spiffe-workload-api
+              readOnly: true
+            - name: spire-oidc-sockets
+              mountPath: /run/spire/oidc-sockets
+              readOnly: false
+            - name: spire-oidc-config
+              mountPath: /run/spire/oidc/config/oidc-discovery-provider.conf
+              subPath: oidc-discovery-provider.conf
+              readOnly: true
+            - name: certdir
+              mountPath: /certs
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: healthz
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: healthz
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {}
+        - name: spiffe-helper
+          resources:
+            {}
+          securityContext:
+            {}
+          image: "ghcr.io/spiffe/spiffe-helper:0.10.0"
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config
+            - /etc/spiffe-helper.conf
+          volumeMounts:
+            - name: spiffe-workload-api
+              mountPath: /spiffe-workload-api
+              readOnly: true
+            - name: spire-oidc-config
+              mountPath: /etc/spiffe-helper.conf
+              subPath: spiffe-helper.conf
+              readOnly: true
+            - name: certdir
+              mountPath: /certs
+      volumes:
+        - name: spiffe-workload-api
+          csi:
+            driver: "csi.spiffe.io"
+            readOnly: true
+        - name: spire-oidc-sockets
+          emptyDir: {}
+        - name: spire-oidc-config
+          configMap:
+            name: spire-server-spiffe-oidc-discovery-provider
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: certdir
+          emptyDir: {}
+---
+# Source: spire/charts/spiffe-csi-driver/templates/spiffe-csi-driver.yaml
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+  name: "csi.spiffe.io"
+
+spec:
+  # Only ephemeral, inline volumes are supported. There is no need for a
+  # controller to provision and attach volumes.
+  attachRequired: false
+
+  # Request the pod information which the CSI driver uses to verify that an
+  # ephemeral mount was requested.
+  podInfoOnMount: true
+
+  # Don't change ownership on the contents of the mount since the Workload API
+  # Unix Domain Socket is typically open to all (i.e. 0777).
+  fsGroupPolicy: None
+
+  # Declare support for ephemeral volumes only.
+  volumeLifecycleModes:
+    - Ephemeral
+---
+# Source: spire/charts/spire-server/templates/controller-manager-cluster-ids.yaml
+apiVersion: spire.spiffe.io/v1alpha1
+kind: ClusterSPIFFEID
+metadata:
+  name: spire-server-spire-server-default
+spec:
+  className: "spire-server-spire-server"
+  hint: default
+  spiffeIDTemplate: "spiffe://{{ .TrustDomain }}/ns/{{ .PodMeta.Namespace }}/sa/{{ .PodSpec.ServiceAccountName }}"
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+      - spire-server
+      - spire-system
+  fallback: true
+---
+# Source: spire/charts/spire-server/templates/controller-manager-cluster-ids.yaml
+apiVersion: spire.spiffe.io/v1alpha1
+kind: ClusterSPIFFEID
+metadata:
+  name: spire-server-spire-server-oidc-discovery-provider
+spec:
+  className: "spire-server-spire-server"
+  hint: oidc-discovery-provider
+  spiffeIDTemplate: "spiffe://{{ .TrustDomain }}/ns/{{ .PodMeta.Namespace }}/sa/{{ .PodSpec.ServiceAccountName }}"
+  podSelector:
+    matchLabels:
+      component: oidc-discovery-provider
+      release: spire-server
+      release-namespace: spire-server
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values:
+      - spire-server
+      - spire-system
+  dnsNameTemplates:
+    - oidc-discovery.{{ .TrustDomain }}
+  autoPopulateDNSNames: true
+---
+# Source: spire/charts/spire-server/templates/controller-manager-cluster-ids.yaml
+apiVersion: spire.spiffe.io/v1alpha1
+kind: ClusterSPIFFEID
+metadata:
+  name: spire-server-spire-server-test-keys
+spec:
+  className: "spire-server-spire-server"
+  hint: test-keys
+  spiffeIDTemplate: "spiffe://{{ .TrustDomain }}/ns/{{ .PodMeta.Namespace }}/sa/{{ .PodSpec.ServiceAccountName }}"
+  podSelector:
+    matchLabels:
+      component: test-keys
+      release: spire-server
+      release-namespace: spire-server
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values:
+      - spire-server
+      - spire-system
