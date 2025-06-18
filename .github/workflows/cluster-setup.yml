@@ -89,17 +89,17 @@ jobs:
 
       - name: Terraform Init for ${{ inputs.region_2 }}
         id: init-2
-        working-directory: ./terraform/${{ inputs.region_2 }}
+        working-directory: ./terraform/env/${{ inputs.region_2 }}
         run: terraform init
 
       - name: Terraform Validate for ${{ inputs.region_2 }}
         id: validate-2
-        working-directory: ./terraform/${{ inputs.region_2 }}
+        working-directory: ./terraform/env/${{ inputs.region_2 }}
         run: terraform validate
 
       - name: Terraform ${{ inputs.action }} for ${{ inputs.region_2 }}
         id: tf-action-2
-        working-directory: ./terraform/${{ inputs.region_2 }}
+        working-directory: ./terraform/env/${{ inputs.region_2 }}
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
             terraform destroy -auto-approve -input=false
