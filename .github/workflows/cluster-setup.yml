@@ -67,7 +67,7 @@ jobs:
 
       - name: Terraform Validate for ${{ inputs.region_1 }}
         id: validate-1
-        working-directory: ./terraform/${{ inputs.region_1 }}
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: terraform validate
 
       - name: Terraform ${{ inputs.action }} for ${{ inputs.region_1 }}
