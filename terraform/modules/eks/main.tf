@@ -15,12 +15,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "eks-283500-${random_string.suffix.result}"
-}
-
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
+  cluster_name = "eks-283500-vkh0mfl1"
 }
 
 module "vpc" {
@@ -76,7 +71,7 @@ module "eks" {
     one = {
       name = "node-group-1"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.large"]
 
       min_size     = 1
       max_size     = 3
@@ -86,13 +81,23 @@ module "eks" {
     two = {
       name = "node-group-2"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.large"]
 
       min_size     = 1
       max_size     = 2
       desired_size = 1
     }
   }
+}
+
+resource "aws_security_group_rule" "istio" {
+  description              = "Istio"
+  type                     = "ingress"
+  from_port                = 15017
+  to_port                  = 15017
+  protocol                 = "tcp"
+  source_security_group_id = module.eks.cluster_security_group_id
+  security_group_id        = module.eks.node_security_group_id
 }
 
 

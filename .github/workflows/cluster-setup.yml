@@ -1,0 +1,108 @@
+name: Terraform EKS Multi-Region Deployment (Manual Trigger)
+
+on:
+  workflow_dispatch:
+    inputs:
+      region_1:
+        description: 'First AWS Region'
+        required: true
+        default: 'eu-central-1'
+        type: choice
+        options:
+        - eu-central-1
+        - us-west-1
+      region_2:
+        description: 'Second AWS Region'
+        required: true
+        default: 'eu-west-1'
+        type: choice
+        options:
+        - eu-central-1
+        - eu-west-1
+      action:
+        description: 'Terraform Action'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+        - plan
+        - apply
+        - destroy
+
+env:
+  TF_VERSION: 1.12.1
+
+jobs:
+  terraform:
+    name: 'Terraform EKS Deployment'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.region_1 }}
+
+      - name: Terraform Init for ${{ inputs.region_1 }}
+        id: init-1
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
+        run: terraform init
+
+      - name: Terraform Validate for ${{ inputs.region_1 }}
+        id: validate-1
+        working-directory: ./terraform/${{ inputs.region_1 }}
+        run: terraform validate
+
+      - name: Terraform ${{ inputs.action }} for ${{ inputs.region_1 }}
+        id: tf-action-1
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
+        run: |
+          if [ "${{ inputs.action }}" = "destroy" ]; then
+            terraform destroy -auto-approve -input=false
+          else
+            terraform ${{ inputs.action }} -input=false
+          fi
+
+      - name: Configure AWS Credentials for ${{ inputs.region_2 }}
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.region_2 }}
+
+      - name: Terraform Init for ${{ inputs.region_2 }}
+        id: init-2
+        working-directory: ./terraform/${{ inputs.region_2 }}
+        run: terraform init
+
+      - name: Terraform Validate for ${{ inputs.region_2 }}
+        id: validate-2
+        working-directory: ./terraform/${{ inputs.region_2 }}
+        run: terraform validate
+
+      - name: Terraform ${{ inputs.action }} for ${{ inputs.region_2 }}
+        id: tf-action-2
+        working-directory: ./terraform/${{ inputs.region_2 }}
+        run: |
+          if [ "${{ inputs.action }}" = "destroy" ]; then
+            terraform destroy -auto-approve -input=false
+          else
+            terraform ${{ inputs.action }} -input=false
+          fi
