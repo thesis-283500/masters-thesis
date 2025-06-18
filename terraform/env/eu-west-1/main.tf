@@ -11,7 +11,7 @@ terraform {
     region       = "eu-central-1"
     use_lockfile = true
   }
-  
+
 }
 
 # Configure the AWS Provider
