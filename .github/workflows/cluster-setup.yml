@@ -102,9 +102,9 @@ jobs:
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
           terraform output -json
-          terraform output -json | jq -r ".eks-outputs.region"
-          aws eks --region $(terraform output -json eks-outputs | jq -r ".region") update-kubeconfig \
-          --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
+          terraform output -json | jq -r ".eks-outputs.value.region"
+          aws eks --region $(terraform output -json | jq -r ".eks-outputs.value.region") update-kubeconfig \
+          --name $(terraform output -json | jq -r ".eks-outputs.value.cluster_name")
 
       - name: Installing actions runner for ${{ inputs.region_1 }}
         if: inputs.action == 'apply'
@@ -148,8 +148,8 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_2 }}
         run: |
-          aws eks --region $(terraform output -json eks-outputs | jq -r ".region") update-kubeconfig \
-          --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
+          aws eks --region $(terraform output -json | jq -r ".eks-outputs.value.region") update-kubeconfig \
+          --name $(terraform output -json | jq -r ".eks-outputs.value.cluster_name")
 
       - name: Installing actions runner for ${{ inputs.region_2 }}
         if: inputs.action == 'apply'
