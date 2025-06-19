@@ -63,16 +63,6 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           kubectl version --client
-
-      # - name: Cleanup Terraform files
-      #   if: always()
-      #   run: |
-      #     cd ./terraform/env/${{ inputs.region_1 }}
-      #     rm -rf .terraform
-      #     rm -f .terraform.lock*
-      #     cd - && cd ./terraform/env/${{ inputs.region_2 }}
-      #     rm -rf .terraform
-      #     rm -f .terraform.lock*
           
       - name: Terraform Format
         id: fmt
@@ -111,8 +101,6 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          terraform output -json
-          terraform output -json | jq -r '.'
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
