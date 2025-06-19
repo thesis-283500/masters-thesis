@@ -2,8 +2,6 @@ apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
   name: runnerdeploy-eu-west-1
-  labels:
-    region: eu-west-1
   namespace: actions-runner-system
 spec:
   replicas: 1

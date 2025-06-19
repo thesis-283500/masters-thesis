@@ -165,8 +165,6 @@ jobs:
           sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
           sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
           sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
-          sed -i "s|runnerdeploy|runnerdeploy-${{ inputs.region_2 }}|" runnerdeployment.yaml
-          yq eval ".metadata.labels.region = "${{ inputs.region_2 }}"" -i runnerdeployment.yaml
           /bin/bash setup.sh
           sleep 20
           kubectl apply -f runnerdeployment-eu-west-1.yaml
