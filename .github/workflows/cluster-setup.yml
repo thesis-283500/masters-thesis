@@ -101,8 +101,8 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          terraform output eks-outputs | sed 's/=/:/g'
-          terraform output eks-outputs | sed 's/=/:/g' | jq -r '.'
+          terraform output eks-outputs | sed -E 's/^(\s*"[^"]+":\s*"[^"]+")$/\1,/g'
+          terraform output eks-outputs | sed -E 's/^(\s*"[^"]+":\s*"[^"]+")$/\1,/g' | jq -r '.'
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
