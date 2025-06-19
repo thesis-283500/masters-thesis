@@ -132,7 +132,7 @@ jobs:
       - name: Editing controller manager secret
         working-directory: ./action-runner
         run: |
-          sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}" controller-manager-secret.yaml
-          sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}" controller-manager-secret.yaml
-          sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}" controller-manager-secret.yaml
+          sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
+          sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
+          sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
           cat controller-manager-secret.yaml
