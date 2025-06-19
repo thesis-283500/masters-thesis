@@ -103,12 +103,12 @@ jobs:
           --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
 
       - name: Installing actions runner for ${{ inputs.region_1 }}
+        if: inputs.action == 'apply'
         working-directory: ./action-runner
         run: |
           sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
           sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
           sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
-          cat controller-manager-secret.yaml
           /bin/bash setup.sh
 
       - name: Configure AWS Credentials for ${{ inputs.region_2 }}
@@ -146,10 +146,10 @@ jobs:
           --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
 
       - name: Installing actions runner for ${{ inputs.region_2 }}
+        if: inputs.action == 'apply'
         working-directory: ./action-runner
         run: |
           sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
           sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
           sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
-          cat controller-manager-secret.yaml
           /bin/bash setup.sh
