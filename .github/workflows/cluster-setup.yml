@@ -75,6 +75,7 @@ jobs:
           rm -rf .terraform
           rm -f terraform.tfstate*
           rm -f *.tf
+          cd -
           
       - name: Terraform Format
         id: fmt
