@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -93,7 +93,6 @@ jobs:
             terraform destroy -auto-approve -input=false
           elif [ "${{ inputs.action }}" == "apply" ]; then
             terraform apply -auto-approve -input=false
-            echo "EKS_OUTPUTS=$(terraform output eks-outputs)" >> $GITHUB_ENV
           else
             terraform ${{ inputs.action }} -input=false
           fi
@@ -102,7 +101,7 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          echo "$EKS_OUTPUTS" | jq -r '.'
+          terraform output eks-outputs | jq -r '.region'
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
