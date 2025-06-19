@@ -101,8 +101,8 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          terraform output -json
-          terraform output -json | jq -r "."
+          EKS_OUTPUTS=$(terraform output -json)
+          echo "$EKS_OUTPUTS" | jq -r "."
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
