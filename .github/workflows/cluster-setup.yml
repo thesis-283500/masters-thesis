@@ -93,6 +93,7 @@ jobs:
             terraform destroy -auto-approve -input=false
           elif [ "${{ inputs.action }}" == "apply" ]; then
             terraform apply -auto-approve -input=false
+            echo "EKS_OUTPUTS=$(terraform output eks-outputs)" >> $GITHUB_ENV
           else
             terraform ${{ inputs.action }} -input=false
           fi
@@ -101,7 +102,7 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          terraform output eks-outputs | grep 'region'
+          echo "$EKS_OUTPUTS" | jq -r '.'
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
