@@ -101,9 +101,9 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
-          terraform output -json eks-outputs | jq ".region"
-          aws eks --region $(terraform output -json eks-outputs | jq ".region") update-kubeconfig \
-          --name $(terraform output -json eks-outputs | jq ".cluster_name")
+          terraform output eks-outputs -json
+          aws eks --region $(terraform output -json eks-outputs | jq -r ".region") update-kubeconfig \
+          --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
 
       - name: Installing actions runner for ${{ inputs.region_1 }}
         if: inputs.action == 'apply'
