@@ -5,6 +5,22 @@ provider "aws" {
   region = var.region
 }
 
+provider "random" {}
+
+# Generate a random string
+resource "random_string" "role_name" {
+  length  = 16
+  upper   = true
+  lower   = true
+  number  = true
+  special = false
+}
+
+# Reference the random value in a local
+locals {
+  random_role_name = random_string.role_name.result
+}
+
 # Filter out local zones, which are not currently supported 
 # with managed node groups
 data "aws_availability_zones" "available" {
@@ -107,7 +123,7 @@ module "irsa-ebs-csi" {
   version = "5.39.0"
 
   create_role                   = true
-  role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}-${module.eks.region}"
+  role_name                     = "AmazonEKSTFEBSCSIRole-${local.random_role_name}"
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
