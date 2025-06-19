@@ -6,3 +6,9 @@ variable "region" {
   type        = string
   default     = "eu-central-1"
 }
+
+variable "cluster_name" {
+  description = "EKS clsuter name"
+  type        = string
+  default     = "eks-283500-vkh0mfl1" 
+}

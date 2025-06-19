@@ -15,7 +15,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "eks-283500-vkh0mfl1"
+  cluster_name = var.cluster_name
 }
 
 module "vpc" {

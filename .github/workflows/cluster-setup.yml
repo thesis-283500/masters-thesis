@@ -64,15 +64,15 @@ jobs:
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           kubectl version --client
 
-      - name: Cleanup Terraform files
-        if: always()
-        run: |
-          cd ./terraform/env/${{ inputs.region_1 }}
-          rm -rf .terraform
-          rm -f .terraform.lock*
-          cd - && cd ./terraform/env/${{ inputs.region_2 }}
-          rm -rf .terraform
-          rm -f .terraform.lock*
+      # - name: Cleanup Terraform files
+      #   if: always()
+      #   run: |
+      #     cd ./terraform/env/${{ inputs.region_1 }}
+      #     rm -rf .terraform
+      #     rm -f .terraform.lock*
+      #     cd - && cd ./terraform/env/${{ inputs.region_2 }}
+      #     rm -rf .terraform
+      #     rm -f .terraform.lock*
           
       - name: Terraform Format
         id: fmt
@@ -132,8 +132,7 @@ jobs:
         if: always()
         run: |
           rm -rf .terraform
-          rm -f terraform.tfstate*
-          rm -f *.tf
+          rm -f .terraform.lock*
 
       - name: Configure AWS Credentials for ${{ inputs.region_2 }}
         uses: aws-actions/configure-aws-credentials@v2
@@ -189,5 +188,4 @@ jobs:
         if: always()
         run: |
           rm -rf .terraform
-          rm -f terraform.tfstate*
-          rm -f *.tf
+          rm -f .terraform.lock*
