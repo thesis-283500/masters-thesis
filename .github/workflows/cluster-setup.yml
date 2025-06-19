@@ -91,6 +91,8 @@ jobs:
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
             terraform destroy -auto-approve -input=false
+          elif [ "${{ inputs.action }}" == "apply" ]; then
+            terraform apply -auto-approve -input=false
           else
             terraform ${{ inputs.action }} -input=false
           fi
@@ -134,6 +136,8 @@ jobs:
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
             terraform destroy -auto-approve -input=false
+          elif [ "${{ inputs.action }}" == "apply" ]; then
+            terraform apply -auto-approve -input=false
           else
             terraform ${{ inputs.action }} -input=false
           fi
