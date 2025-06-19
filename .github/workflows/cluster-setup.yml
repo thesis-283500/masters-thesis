@@ -71,7 +71,7 @@ jobs:
           rm -rf .terraform
           rm -f terraform.tfstate*
           rm -f *.tf
-          cd ./terraform/env/${{ inputs.region_2 }}
+          cd - && cd ./terraform/env/${{ inputs.region_2 }}
           rm -rf .terraform
           rm -f terraform.tfstate*
           rm -f *.tf
