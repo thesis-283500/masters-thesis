@@ -1,7 +1,9 @@
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
-  name: example-runnerdeploy
+  name: runnerdeploy-eu-central-1
+  labels:
+    region: eu-central-1
 spec:
   replicas: 1
   template:

@@ -1,0 +1,11 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: runnerdeploy-eu-west-1
+  labels:
+    region: eu-west-1
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: thesis-283500/masters-thesis
