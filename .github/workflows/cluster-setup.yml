@@ -106,3 +106,28 @@ jobs:
           else
             terraform ${{ inputs.action }} -input=false
           fi
+        
+      - name: Install AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          install-aws-cli: true
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.30.0'  # Specify your desired version
+
+      - name: Installing actions runners for ${{ inputs.region_1 }}
+        if: inputs.action == 'apply'
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
+        run: |
+          aws eks --region $(terraform output -json eks-outputs | jq -r ".region") update-kubeconfig \
+          --name $(terraform output -json eks-outputs | jq -r ".cluster_name")
+
+      - name: Editing controller manager secret
+        working-directory: ./action-runner
+        run: |
+          sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}" controller-manager-secret.yaml
+          sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}" controller-manager-secret.yaml
+          sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}" controller-manager-secret.yaml
+          cat controller-manager-secret.yaml
