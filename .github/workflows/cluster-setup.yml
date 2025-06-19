@@ -58,12 +58,25 @@ jobs:
           rm awscliv2.zip
 
       # Install kubectl
-      - name: Install kubectl and jq
+      - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           kubectl version --client
 
+      - name: Cleanup Terraform files
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
+        if: always()
+        run: |
+          cd ./terraform/env/${{ inputs.region_1 }}
+          rm -rf .terraform
+          rm -f terraform.tfstate*
+          rm -f *.tf
+          cd ./terraform/env/${{ inputs.region_2 }}
+          rm -rf .terraform
+          rm -f terraform.tfstate*
+          rm -f *.tf
+          
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check -recursive
@@ -117,6 +130,14 @@ jobs:
           sleep 20
           kubectl apply -f runnerdeployment-eu-central-1.yaml
 
+      - name: Cleanup Terraform files
+        working-directory: ./terraform/env/${{ inputs.region_1 }}
+        if: always()
+        run: |
+          rm -rf .terraform
+          rm -f terraform.tfstate*
+          rm -f *.tf
+
       - name: Configure AWS Credentials for ${{ inputs.region_2 }}
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -165,3 +186,11 @@ jobs:
           /bin/bash setup.sh
           sleep 20
           kubectl apply -f runnerdeployment-eu-west-1.yaml
+      
+      - name: Cleanup Terraform files
+        working-directory: ./terraform/env/${{ inputs.region_2 }}
+        if: always()
+        run: |
+          rm -rf .terraform
+          rm -f terraform.tfstate*
+          rm -f *.tf
