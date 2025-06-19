@@ -102,7 +102,7 @@ jobs:
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
           terraform output -json
-          terraform output -json | jq -r ".[].value.region"
+          terraform output -json | jq -r ".[].value"
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
 
