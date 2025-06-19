@@ -65,7 +65,6 @@ jobs:
           kubectl version --client
 
       - name: Cleanup Terraform files
-        working-directory: ./terraform/env/${{ inputs.region_1 }}
         if: always()
         run: |
           cd ./terraform/env/${{ inputs.region_1 }}
