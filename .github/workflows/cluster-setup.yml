@@ -107,17 +107,14 @@ jobs:
             terraform ${{ inputs.action }} -input=false
           fi
         
-      - name: Install AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          install-aws-cli: true
+      - name: Install AWS CLI and kubectl via apt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli kubectl
+          aws --version
+          kubectl version --client
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'v1.30.0'  # Specify your desired version
-
-      - name: Installing actions runners for ${{ inputs.region_1 }}
+      - name: Configuring kubectl for ${{ inputs.region_1 }}
         if: inputs.action == 'apply'
         working-directory: ./terraform/env/${{ inputs.region_1 }}
         run: |
