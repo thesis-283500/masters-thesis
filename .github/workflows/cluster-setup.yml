@@ -69,13 +69,10 @@ jobs:
         run: |
           cd ./terraform/env/${{ inputs.region_1 }}
           rm -rf .terraform
-          rm -f terraform.tfstate*
-          rm -f *.tf
+          rm -f .terraform.lock*
           cd - && cd ./terraform/env/${{ inputs.region_2 }}
           rm -rf .terraform
-          rm -f terraform.tfstate*
-          rm -f *.tf
-          cd -
+          rm -f .terraform.lock*
           
       - name: Terraform Format
         id: fmt
