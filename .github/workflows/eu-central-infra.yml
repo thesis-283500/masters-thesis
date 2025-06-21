@@ -5,7 +5,7 @@ on:
     
 jobs:
   infra-setup:
-    runs-on: [eu-central-1]
+    runs-on: [self-hosted, eu-central-1]
     name: Setup infra for eu-central-1
 
     steps:
@@ -42,8 +42,8 @@ jobs:
       - name: Configuring kubectl for eu-central-1
         working-directory: ./terraform/env/eu-central-1
         run: |
-          sudo apt update
-          sudo apt install nodejs npm -y
+          sudo apt-get update
+          sudo apt-get install nodejs npm -y
 
           terraform init
           terraform refresh
