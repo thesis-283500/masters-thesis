@@ -121,7 +121,6 @@ jobs:
               --namespace "${NAMESPACE}" \
               --create-namespace \
               oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller --values values.yaml
-          kubectl apply -f controller-manager-secret.yaml
 
           INSTALLATION_NAME="${{ inputs.region_1 }}"
           NAMESPACE="arc-runners"
@@ -129,6 +128,7 @@ jobs:
               --namespace "${NAMESPACE}" \
               --create-namespace \
               oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+          kubectl apply -f controller-manager-secret.yaml
 
       - name: Cleanup Terraform files
         working-directory: ./terraform/env/${{ inputs.region_1 }}
