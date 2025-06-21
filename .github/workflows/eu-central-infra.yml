@@ -43,7 +43,7 @@ jobs:
         working-directory: ./terraform/env/eu-central-1
         run: |
           sudo apt update
-          sudo apt install nodejs npm
+          sudo apt install nodejs npm -y
 
           terraform init
           terraform refresh
