@@ -8,3 +8,5 @@ spec:
   template:
     spec:
       repository: thesis-283500/masters-thesis
+      labels:
+        - eu-west-1

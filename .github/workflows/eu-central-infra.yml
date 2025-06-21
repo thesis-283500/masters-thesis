@@ -42,6 +42,7 @@ jobs:
       - name: Configuring kubectl for eu-central-1
         working-directory: ./terraform/env/eu-central-1
         run: |
+          terraform init
           terraform refresh
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
           --name $(terraform output -json | jq -r ".[].value.cluster_name")
