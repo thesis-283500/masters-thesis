@@ -39,12 +39,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'  # Change to your required version
+          cache: 'npm'
+
       - name: Configuring kubectl for eu-central-1
         working-directory: ./terraform/env/eu-central-1
         run: |
-          sudo apt-get update
-          sudo apt-get install nodejs npm -y
-
           terraform init
           terraform refresh
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
