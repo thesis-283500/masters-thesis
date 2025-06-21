@@ -62,9 +62,5 @@ jobs:
       - name: Install istio
         working-directory: ./istio
         run: |
-          export ISTIO_VERSION=1.22.0
-          curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-          mv "${ISTIO_VERSION}"/bin/istioctl ./istioctl
-          istioctl version
           /bin/bash installistio.sh
 
