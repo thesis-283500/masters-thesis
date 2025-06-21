@@ -117,7 +117,7 @@ jobs:
           sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
           sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
           NAMESPACE="arc-system"
-          helm install arc \
+          helm upgrade --install arc \
               --namespace "${NAMESPACE}" \
               --create-namespace \
               oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller --values values.yaml
@@ -125,7 +125,7 @@ jobs:
 
           INSTALLATION_NAME="${{ inputs.region_1 }}"
           NAMESPACE="arc-runners"
-          helm install "${INSTALLATION_NAME}" \
+          helm upgrade --install "${INSTALLATION_NAME}" \
               --namespace "${NAMESPACE}" \
               --create-namespace \
               oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
