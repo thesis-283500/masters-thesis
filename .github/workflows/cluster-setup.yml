@@ -113,22 +113,23 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./action-runner
         run: |
-          sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
-          sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
-          sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
           NAMESPACE="arc-system"
           helm upgrade --install arc \
               --namespace "${NAMESPACE}" \
               --create-namespace \
-              oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller --values values.yaml
+              oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
 
           INSTALLATION_NAME="${{ inputs.region_1 }}"
+          GITHUB_CONFIG_URL="https://github.com/thesis-283500"
           NAMESPACE="arc-runners"
           helm upgrade --install "${INSTALLATION_NAME}" \
               --namespace "${NAMESPACE}" \
+              --set githubConfigUrl="${GITHUB_CONFIG_URL}" \
+              --set githubConfigSecret.github_app_id="${{ secrets.APP_ID }}" \
+              --set githubConfigSecret.github_app_installation_id="${{ secrets.INSTALLATION_ID }}" \
+              --set githubConfigSecret.github_app_private_key="${{ secrets.APP_PRIVATE_KEY }}" \
               --create-namespace \
               oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
-          kubectl apply -f controller-manager-secret.yaml
 
       - name: Cleanup Terraform files
         working-directory: ./terraform/env/${{ inputs.region_1 }}
@@ -177,12 +178,23 @@ jobs:
         if: inputs.action == 'apply'
         working-directory: ./action-runner
         run: |
-          sed -i "s|APP_ID|${{ secrets.ACTIONS_APP_ID }}|" controller-manager-secret.yaml
-          sed -i "s|INSTALLATION_ID|${{ secrets.ACTIONS_APP_INSTALLATION_ID }}|" controller-manager-secret.yaml
-          sed -i "s|PRIVATE_KEY|${{ secrets.ACTIONS_APP_PRIVATE_KEY }}|" controller-manager-secret.yaml
-          /bin/bash setup.sh
-          sleep 20
-          kubectl apply -f runnerdeployment-eu-west-1.yaml
+          NAMESPACE="arc-system"
+          helm upgrade --install arc \
+              --namespace "${NAMESPACE}" \
+              --create-namespace \
+              oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+
+          INSTALLATION_NAME="${{ inputs.region_2 }}"
+          GITHUB_CONFIG_URL="https://github.com/thesis-283500"
+          NAMESPACE="arc-runners"
+          helm upgrade --install "${INSTALLATION_NAME}" \
+              --namespace "${NAMESPACE}" \
+              --set githubConfigUrl="${GITHUB_CONFIG_URL}" \
+              --set githubConfigSecret.github_app_id="${{ secrets.APP_ID }}" \
+              --set githubConfigSecret.github_app_installation_id="${{ secrets.INSTALLATION_ID }}" \
+              --set githubConfigSecret.github_app_private_key="${{ secrets.APP_PRIVATE_KEY }}" \
+              --create-namespace \
+              oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
       
       - name: Cleanup Terraform files
         working-directory: ./terraform/env/${{ inputs.region_2 }}
