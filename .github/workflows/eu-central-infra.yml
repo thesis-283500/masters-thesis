@@ -64,7 +64,7 @@ jobs:
         run: |
           export ISTIO_VERSION=1.22.0
           curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
-          sudo mv "${ISTIO_VERSION}"/bin/istioctl /usr/local/bin/istioctl
+          mv "${ISTIO_VERSION}"/bin/istioctl ./istioctl
           istioctl version
           /bin/bash installistio.sh
 

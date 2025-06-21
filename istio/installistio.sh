@@ -2,7 +2,7 @@
 
 
 # point this to your latest build binary
-istioctl_latest=/usr/local/bin/istioctl
+istioctl_latest=./istioctl
 
 # install certs in both clusters
 kubectl create namespace istio-system 
