@@ -40,7 +40,6 @@ jobs:
           aws-region: eu-central-1
 
       - name: Configuring kubectl for eu-central-1
-        if: inputs.action == 'apply'
         working-directory: ./terraform/env/eu-central-1
         run: |
           aws eks --region $(terraform output -json | jq -r ".[].value.region") update-kubeconfig \
