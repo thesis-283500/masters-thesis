@@ -5,7 +5,7 @@ on:
     
 jobs:
   infra-setup:
-    runs-on: [self-hosted, eu-central-1]
+    runs-on: [eu-central-1]
     name: Setup infra for eu-central-1
 
     steps:
