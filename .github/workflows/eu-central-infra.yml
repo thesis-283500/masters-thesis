@@ -58,3 +58,14 @@ jobs:
         working-directory: ./spire
         run: |
           /bin/bash setup.sh
+
+      - name: Install istio
+        working-directory: ./istio
+        run: |
+          TAG=$(curl https://storage.googleapis.com/istio-build/dev/latest)
+          curl -OJL https://storage.googleapis.com/istio-build/dev/$TAG/istioctl-$TAG-osx.tar.gz
+          tar xvzf istioctl-$TAG-osx.tar.gz
+          sudo mv istioctl /usr/local/bin/istioctl
+          istioctl version
+          /bin/bash installistio.sh
+
