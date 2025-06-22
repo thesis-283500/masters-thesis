@@ -78,3 +78,8 @@ jobs:
         working-directory: ./kepler
         run: |
           /bin/bash setup.sh
+
+      - name: Install application
+        working-directory: ./app
+        run: |
+          kubectl apply -f istio-manifest.yaml
