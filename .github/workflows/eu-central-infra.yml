@@ -72,7 +72,7 @@ jobs:
       - name: Install kiali
         working-directory: ./kiali
         run: |
-          /bin/bash install.yaml
+          /bin/bash kiali.sh
 
       - name: Install kepler
         working-directory: ./kepler
