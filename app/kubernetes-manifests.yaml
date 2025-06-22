@@ -24,6 +24,9 @@ metadata:
   name: emailservice
   labels:
     app: emailservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -99,6 +102,9 @@ metadata:
   name: checkoutservice
   labels:
     app: checkoutservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -181,6 +187,9 @@ metadata:
   name: recommendationservice
   labels:
     app: recommendationservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -258,6 +267,9 @@ metadata:
   name: frontend
   labels:
     app: frontend
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -386,6 +398,9 @@ metadata:
   name: paymentservice
   labels:
     app: paymentservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -459,6 +474,9 @@ metadata:
   name: productcatalogservice
   labels:
     app: productcatalogservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -532,6 +550,9 @@ metadata:
   name: cartservice
   labels:
     app: cartservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -606,6 +627,9 @@ metadata:
   name: redis-cart
   labels:
     app: redis-cart
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -675,6 +699,9 @@ metadata:
   name: loadgenerator
   labels:
     app: loadgenerator
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -762,6 +789,9 @@ metadata:
   name: currencyservice
   labels:
     app: currencyservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -836,6 +866,9 @@ metadata:
   name: shippingservice
   labels:
     app: shippingservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -909,6 +942,9 @@ metadata:
   name: adservice
   labels:
     app: adservice
+    spiffe.io/spire-managed-identity: "true"
+  annotations:
+    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
