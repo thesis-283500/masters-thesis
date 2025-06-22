@@ -64,3 +64,8 @@ jobs:
         run: |
           /bin/bash installistio.sh
 
+      - name: Install kube prometheus
+        working-directory: ./kube-prometheus
+        run: |
+          /bin/bash setup.sh
+
