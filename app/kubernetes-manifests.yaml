@@ -24,9 +24,6 @@ metadata:
   name: emailservice
   labels:
     app: emailservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -35,6 +32,9 @@ spec:
     metadata:
       labels:
         app: emailservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: emailservice
       terminationGracePeriodSeconds: 5
@@ -102,9 +102,6 @@ metadata:
   name: checkoutservice
   labels:
     app: checkoutservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -113,6 +110,9 @@ spec:
     metadata:
       labels:
         app: checkoutservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: checkoutservice
       securityContext:
@@ -187,9 +187,6 @@ metadata:
   name: recommendationservice
   labels:
     app: recommendationservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -198,6 +195,9 @@ spec:
     metadata:
       labels:
         app: recommendationservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: recommendationservice
       terminationGracePeriodSeconds: 5
@@ -267,9 +267,6 @@ metadata:
   name: frontend
   labels:
     app: frontend
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -278,7 +275,9 @@ spec:
     metadata:
       labels:
         app: frontend
+        spiffe.io/spire-managed-identity: "true"
       annotations:
+        inject.istio.io/templates: "sidecar,spire"
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       serviceAccountName: frontend
@@ -398,9 +397,6 @@ metadata:
   name: paymentservice
   labels:
     app: paymentservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -409,6 +405,9 @@ spec:
     metadata:
       labels:
         app: paymentservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: paymentservice
       terminationGracePeriodSeconds: 5
@@ -474,9 +473,6 @@ metadata:
   name: productcatalogservice
   labels:
     app: productcatalogservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -485,6 +481,9 @@ spec:
     metadata:
       labels:
         app: productcatalogservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: productcatalogservice
       terminationGracePeriodSeconds: 5
@@ -550,9 +549,6 @@ metadata:
   name: cartservice
   labels:
     app: cartservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -561,6 +557,9 @@ spec:
     metadata:
       labels:
         app: cartservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: cartservice
       terminationGracePeriodSeconds: 5
@@ -627,9 +626,6 @@ metadata:
   name: redis-cart
   labels:
     app: redis-cart
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -638,6 +634,9 @@ spec:
     metadata:
       labels:
         app: redis-cart
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       securityContext:
         fsGroup: 1000
@@ -699,9 +698,6 @@ metadata:
   name: loadgenerator
   labels:
     app: loadgenerator
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -711,7 +707,9 @@ spec:
     metadata:
       labels:
         app: loadgenerator
+        spiffe.io/spire-managed-identity: "true"
       annotations:
+        inject.istio.io/templates: "sidecar,spire"
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
     spec:
       serviceAccountName: loadgenerator
@@ -727,20 +725,26 @@ spec:
         - /bin/sh
         - -exc
         - |
-          MAX_RETRIES=12
-          RETRY_INTERVAL=10
-          for i in $(seq 1 $MAX_RETRIES); do
-            echo "Attempt $i: Pinging frontend: ${FRONTEND_ADDR}..."
-            STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
-            if [ $STATUSCODE -eq 200 ]; then
-                echo "Frontend is reachable."
-                exit 0
-            fi
-            echo "Error: Could not reach frontend - Status code: ${STATUSCODE}"
-            sleep $RETRY_INTERVAL
+          echo "$(date -Iseconds)" Waiting for: ${CHECK_FILE}
+          while [[ ! -e ${CHECK_FILE} ]] ; do
+            echo "$(date -Iseconds)" File does not exist: ${CHECK_FILE}
+            sleep 15
           done
-          echo "Failed to reach frontend after $MAX_RETRIES attempts."
-          exit 1
+          ls -l ${CHECK_FILE}
+          # MAX_RETRIES=12
+          # RETRY_INTERVAL=10
+          # for i in $(seq 1 $MAX_RETRIES); do
+          #   echo "Attempt $i: Pinging frontend: ${FRONTEND_ADDR}..."
+          #   STATUSCODE=$(wget --server-response http://${FRONTEND_ADDR} 2>&1 | awk '/^  HTTP/{print $2}')
+          #   if [ $STATUSCODE -eq 200 ]; then
+          #       echo "Frontend is reachable."
+          #       exit 0
+          #   fi
+          #   echo "Error: Could not reach frontend - Status code: ${STATUSCODE}"
+          #   sleep $RETRY_INTERVAL
+          # done
+          # echo "Failed to reach frontend after $MAX_RETRIES attempts."
+          # exit 1
         name: frontend-check
         securityContext:
           allowPrivilegeEscalation: false
@@ -753,6 +757,12 @@ spec:
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"
+        - name: CHECK_FILE
+          value: /run/secrets/workload-spiffe-uds/socket
+        volumeMounts:
+        - name: workload-socket
+          mountPath: /run/secrets/workload-spiffe-uds
+          readOnly: true
       containers:
       - name: main
         securityContext:
@@ -777,6 +787,11 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
+      volumes:
+      - name: workload-socket
+        csi:
+          driver: "csi.spiffe.io"
+          readOnly: true
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -789,9 +804,6 @@ metadata:
   name: currencyservice
   labels:
     app: currencyservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -800,6 +812,9 @@ spec:
     metadata:
       labels:
         app: currencyservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: currencyservice
       terminationGracePeriodSeconds: 5
@@ -866,9 +881,6 @@ metadata:
   name: shippingservice
   labels:
     app: shippingservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -877,6 +889,9 @@ spec:
     metadata:
       labels:
         app: shippingservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: shippingservice
       securityContext:
@@ -942,9 +957,6 @@ metadata:
   name: adservice
   labels:
     app: adservice
-    spiffe.io/spire-managed-identity: "true"
-  annotations:
-    inject.istio.io/templates: "sidecar,spire"
 spec:
   selector:
     matchLabels:
@@ -953,6 +965,9 @@ spec:
     metadata:
       labels:
         app: adservice
+        spiffe.io/spire-managed-identity: "true"
+      annotations:
+        inject.istio.io/templates: "sidecar,spire"
     spec:
       serviceAccountName: adservice
       terminationGracePeriodSeconds: 5
