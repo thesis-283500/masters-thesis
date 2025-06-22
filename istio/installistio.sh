@@ -5,7 +5,6 @@
 kubectl create namespace istio-system 
 
 kubectl apply -f gateway-crds.yaml
-kubectl label namespace istio-system topology.istio.io/network=thesis-283500
 
 kubectl apply -f manifest.yaml
 
