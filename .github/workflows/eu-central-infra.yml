@@ -82,4 +82,4 @@ jobs:
       - name: Install application
         working-directory: ./app
         run: |
-          kubectl apply -f istio-manifest.yaml
+          kubectl apply -f istio-manifests.yaml
