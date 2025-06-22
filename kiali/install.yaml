@@ -112,7 +112,7 @@ data:
         # Grafana service name is "grafana" and is in the "telemetry" namespace.
         internal_url: 'http://grafana.monitoring.svc.cluster.local:3000'
         # Public facing URL of Grafana
-        # external_url: 'http://my-ingress-host/grafana'
+        external_url: ''
         # Grafana datasource UID when there are multiple
         datasource_uid: ""
         dashboards:
