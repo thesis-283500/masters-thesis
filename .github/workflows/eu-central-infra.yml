@@ -82,4 +82,5 @@ jobs:
       - name: Install application
         working-directory: ./app
         run: |
-          kubectl apply -f istio-manifests.yaml
+          kubectl label ns default istio-injection=enabled
+          kubectl apply -f kubernetes-manifests.yaml
