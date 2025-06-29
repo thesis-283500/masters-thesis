@@ -59,6 +59,11 @@ jobs:
           rm -rf .terraform
           rm -f .terraform.lock*
 
+      - name: Install kube prometheus
+        working-directory: ./kube-prometheus
+        run: |
+          /bin/bash setup.sh
+
       - name: Install spire
         working-directory: ./spire
         run: |
@@ -68,11 +73,6 @@ jobs:
         working-directory: ./istio
         run: |
           /bin/bash installistio.sh
-
-      - name: Install kube prometheus
-        working-directory: ./kube-prometheus
-        run: |
-          /bin/bash setup.sh
 
       - name: Install kiali
         working-directory: ./kiali

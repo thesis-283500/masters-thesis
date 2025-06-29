@@ -11,3 +11,4 @@ kubectl apply -f manifest.yaml
 sleep 30
 
 kubectl apply -n istio-system -f auth.yaml
+kubectl apply -n istio-system -f istio-serviceMonitor.yaml
