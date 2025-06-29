@@ -62,4 +62,15 @@ jobs:
       - name: Installing argocd
         working-directory: argocd/bootstrap
         run: |
-          /bin/bash setup.sh
+          helm repo add argo https://argoproj.github.io/argo-helm
+          helm repo update
+
+          helm upgrade --install my-argo-cd argo/argo-cd --version 8.1.2 \
+            --set credentialTemplates="" \
+            --set credentialTemplates.github-enterprise-creds-1.url="https://github.com/thesis-283500/masters-thesis.git" \
+            --set credentialTemplates.github-enterprise-creds-1.githubAppID="${{ secrets.APP_ID }}" \
+            --set credentialTemplates.github-enterprise-creds-1.githubAppInstallationID="${{ secrets.INSTALLATION_ID }}" \
+            --set credentialTemplates.github-enterprise-creds-1.githubAppEnterpriseBaseUrl="https://github.com/thesis-283500/masters-thesis/api/v3" \
+            --set credentialTemplates.github-enterprise-creds-1.githubAppPrivateKey="${{ secrets.APP_PRIVATE_KEY }}" \
+            --namespace argocd \
+            --create-namespace

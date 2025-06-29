@@ -8,7 +8,7 @@
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
-helm install my-argo-cd argo/argo-cd --version 8.1.2 \
+helm upgrade --install my-argo-cd argo/argo-cd --version 8.1.2 \
 --set credentialTemplates.github-enterprise-creds-1.url="https://github.com/thesis-283500/masters-thesis.git" \
 --set credentialTemplates.github-enterprise-creds-1.githubAppID="${{ secrets.APP_ID }}" \
 --set credentialTemplates.github-enterprise-creds-1.githubAppInstallationID="${{ secrets.INSTALLATION_ID }}" \
