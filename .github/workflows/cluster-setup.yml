@@ -111,7 +111,6 @@ jobs:
 
       - name: Installing actions runner for ${{ inputs.region_1 }}
         if: inputs.action == 'apply'
-        working-directory: ./action-runner
         run: |
           NAMESPACE="arc-system"
           helm upgrade --install arc \
@@ -176,7 +175,6 @@ jobs:
 
       - name: Installing actions runner for ${{ inputs.region_2 }}
         if: inputs.action == 'apply'
-        working-directory: ./action-runner
         run: |
           NAMESPACE="arc-system"
           helm upgrade --install arc \
