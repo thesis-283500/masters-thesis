@@ -44,11 +44,6 @@ jobs:
         with:
           node-version: '18'  # Change to your required version
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.14.0
-
       - name: Configuring kubectl for eu-central-1
         working-directory: ./terraform/env/eu-central-1
         run: |
