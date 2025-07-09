@@ -68,10 +68,11 @@ jobs:
           export PRIVATE_KEY=$(echo "${{ secrets.APP_PRIVATE_KEY }}" | base64 -w 0)
           envsubst < app-secret.yaml > changed-app-secret.yaml
           cat changed-app-secret.yaml
-          kubectl apply -f changed-app-secret.yaml
 
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
           helm upgrade --install thesis-gitops argo/argo-cd --version 8.1.2 \
               --namespace argocd \
               --create-namespace 
+
+          kubectl apply -f changed-app-secret.yaml
