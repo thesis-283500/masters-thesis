@@ -63,7 +63,7 @@ jobs:
         env:
             APP_ID: ${{ secrets.APP_D }}
             INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
-            PRIVATE_KEY: ${{ APP_PRIVATE_KEY }}
+            PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
         with:
           input: argocd/bootstrap/app-secret.yaml
           output: argocd/bootstrap/changed-app-secret.yaml 
