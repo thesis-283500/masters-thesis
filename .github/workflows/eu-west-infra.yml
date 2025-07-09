@@ -61,8 +61,10 @@ jobs:
 
       - name: Installing argocd
         working-directory: argocd/bootstrap
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
         run: |
-          sed -i "s|APP_ID|$(echo "${{ secrets.APP_ID }}")|" app-secret.yaml
+          sed -i "s|APP_ID|$APP_ID|" app-secret.yaml
           sed -i "s|INSTALLATION_ID|$(echo "${{ secrets.INSTALLATION_ID }}")|" app-secret.yaml
           sed -i "s|PRIVATE_KEY|$(echo "${{ secrets.APP_PRIVATE_KEY }}")|" app-secret.yaml
           kubectl apply -f app-secret.yaml
