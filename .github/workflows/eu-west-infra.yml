@@ -62,9 +62,9 @@ jobs:
       - name: Installing argocd
         working-directory: argocd/bootstrap
         run: |
-          sed -i "s|APP_ID|${{ secrets.APP_ID }}|g" app-secret.yaml
-          sed -i "s|INSTALLATION_ID|${{ secrets.INSTALLATION_ID }}|g" app-secret.yaml
-          sed -i "s|PRIVATE_KEY|${{ secrets.APP_PRIVATE_KEY }}|g" app-secret.yaml
+          sed -i "s|APP_ID|"${{ secrets.APP_ID }}"|" app-secret.yaml
+          sed -i "s|INSTALLATION_ID|"${{ secrets.INSTALLATION_ID }}"|" app-secret.yaml
+          sed -i "s|PRIVATE_KEY|"${{ secrets.APP_PRIVATE_KEY }}"|" app-secret.yaml
           kubectl apply -f app-secret.yaml
 
           helm repo add argo https://argoproj.github.io/argo-helm
