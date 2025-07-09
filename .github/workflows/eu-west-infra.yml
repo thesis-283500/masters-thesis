@@ -61,12 +61,11 @@ jobs:
 
       - name: Installing argocd
         working-directory: argocd/bootstrap
-        env:
-          APP_ID: $(echo "${{ secrets.APP_ID }}" | base64 -w 0)"
-          INSTALLATION_ID: $(echo "${{ secrets.INSTALLATION_ID }}" | base64 -w 0)"
-          PRIVATE_KEY: $(echo "${{ secrets.APP_PRIVATE_KEY }}" | base64 -w 0)"
         run: |
           sudo apt-get update && sudo apt-get install -y gettext
+          export APP_ID=$(echo "${{ secrets.APP_ID }}" | base64 -w 0)
+          export INSTALLATION_ID=$(echo "${{ secrets.INSTALLATION_ID }}" | base64 -w 0)
+          export PRIVATE_KEY=$(echo "${{ secrets.APP_PRIVATE_KEY }}" | base64 -w 0)
           envsubst < app-secret.yaml > changed-app-secret.yaml
           cat changed-app-secret.yaml
           kubectl apply -f changed-app-secret.yaml
