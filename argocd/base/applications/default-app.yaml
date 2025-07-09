@@ -9,6 +9,12 @@ spec:
     repoURL: https://github.com/thesis-283500/masters-thesis.git
     targetRevision: HEAD
     path: KUSTOMIZE
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
   destination:
     server: https://kubernetes.default.svc
     namespace: KUSTOMIZE
