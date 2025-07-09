@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
   - kube-prometheus
   - spire
+  - microservices
+  - kiali
+  - kepler
+  - istio
