@@ -61,9 +61,10 @@ jobs:
 
       - name: Installing argocd
         working-directory: argocd/bootstrap
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
         run: |
           sudo apt-get update && sudo apt-get install -y gettext
-          echo "APP_ID=$(echo -n ${{ secrets.APP_ID }})" >> $GITHUB_ENV
           echo "INSTALLATION_ID=$(echo -n ${{ secrets.INSTALLATION_ID }})" >> $GITHUB_ENV
           echo "PRIVATE_KEY=$(echo -n ${{ secrets.APP_PRIVATE_KEY }})" >> $GITHUB_ENV
           envsubst < app-secret.yaml > changed-app-secret.yaml
