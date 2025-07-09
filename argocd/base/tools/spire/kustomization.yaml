@@ -3,5 +3,5 @@ kind: Kustomization
 
 resources:
   - manifest.yaml
-  - spire-crd.yaml
   - spiffe-id.yaml
+  - spire-crd.yaml
