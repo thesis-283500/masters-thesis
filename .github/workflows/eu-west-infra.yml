@@ -64,7 +64,10 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y gettext
           echo "APP_ID=$(echo -n ${{ secrets.APP_ID }})" >> $GITHUB_ENV
-          envsubst < app-secret.yaml
+          echo "INSTALLATION_ID=$(echo -n ${{ secrets.INSTALLATION_ID }})" >> $GITHUB_ENV
+          echo "PRIVATE_KEY=$(echo -n ${{ secrets.APP_PRIVATE_KEY }})" >> $GITHUB_ENV
+          envsubst < app-secret.yaml > changed-app-secret.yaml
+          cat changed-app-secret.yaml
           # kubectl apply -f app-secret.yaml
 
           # helm repo add argo https://argoproj.github.io/argo-helm
