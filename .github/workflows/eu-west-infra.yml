@@ -62,13 +62,12 @@ jobs:
       - name: Installing argocd
         working-directory: argocd/bootstrap
         run: |
-          sed -i "s/APP_ID/$(echo -n ${{ secrets.APP_ID }})/" app-secret.yaml
-          sed -i "s|INSTALLATION_ID|$(echo "${{ secrets.INSTALLATION_ID }}")|" app-secret.yaml
-          sed -i "s|PRIVATE_KEY|$(echo "${{ secrets.APP_PRIVATE_KEY }}")|" app-secret.yaml
-          kubectl apply -f app-secret.yaml
+          echo "APP_ID=$(echo -n ${{ secrets.APP_ID }})" >> $GITHUB_ENV
+          envsubst < app-secret.yaml
+          # kubectl apply -f app-secret.yaml
 
-          helm repo add argo https://argoproj.github.io/argo-helm
-          helm repo update
-          helm upgrade --install thesis-gitops argo/argo-cd --version 8.1.2 \
-              --namespace argocd \
-              --create-namespace 
+          # helm repo add argo https://argoproj.github.io/argo-helm
+          # helm repo update
+          # helm upgrade --install thesis-gitops argo/argo-cd --version 8.1.2 \
+          #     --namespace argocd \
+          #     --create-namespace 
