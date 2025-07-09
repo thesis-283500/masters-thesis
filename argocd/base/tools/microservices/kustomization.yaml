@@ -3,6 +3,6 @@ kind: Kustomization
 
 resources:
   - gateway-crds.yaml
-  - httproute-crd.yaml
+  # - httproute-crd.yaml
   - istio-manifests.yaml
   - kubernetes-manifests.yaml
