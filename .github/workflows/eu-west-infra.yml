@@ -59,11 +59,20 @@ jobs:
           rm -rf .terraform
           rm -f .terraform.lock*
 
+      - uses: danielr1996/envsubst-action@1.0.0
+        env:
+            APP_ID: ${{ secrets.APP_D }}
+            INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+            PRIVATE_KEY: ${{ APP_PRIVATE_KEY }}
+        with:
+          input: argocd/bootstrap/app-secret.yaml
+          output: argocd/bootstrap/changed-app-secret.yaml 
+
       - name: Installing argocd
         working-directory: argocd/bootstrap
         run: |
-          echo "APP_ID=$(echo -n ${{ secrets.APP_ID }})" >> $GITHUB_ENV
-          envsubst < app-secret.yaml
+          cat argocd/bootstrap/changed-app-secret.yaml
+         
           # kubectl apply -f app-secret.yaml
 
           # helm repo add argo https://argoproj.github.io/argo-helm
