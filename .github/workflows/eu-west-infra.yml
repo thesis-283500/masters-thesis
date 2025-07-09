@@ -63,16 +63,16 @@ jobs:
         working-directory: argocd/bootstrap
         env:
           APP_ID: ${{ secrets.APP_ID }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+          PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
         run: |
           sudo apt-get update && sudo apt-get install -y gettext
-          echo "INSTALLATION_ID=$(echo -n ${{ secrets.INSTALLATION_ID }})" >> $GITHUB_ENV
-          echo "PRIVATE_KEY=$(echo -n ${{ secrets.APP_PRIVATE_KEY }})" >> $GITHUB_ENV
           envsubst < app-secret.yaml > changed-app-secret.yaml
           cat changed-app-secret.yaml
-          # kubectl apply -f app-secret.yaml
+          kubectl apply -f changed-app-secret.yaml
 
-          # helm repo add argo https://argoproj.github.io/argo-helm
-          # helm repo update
-          # helm upgrade --install thesis-gitops argo/argo-cd --version 8.1.2 \
-          #     --namespace argocd \
-          #     --create-namespace 
+          helm repo add argo https://argoproj.github.io/argo-helm
+          helm repo update
+          helm upgrade --install thesis-gitops argo/argo-cd --version 8.1.2 \
+              --namespace argocd \
+              --create-namespace 
