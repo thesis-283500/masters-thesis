@@ -21053,6 +21053,7 @@ spec:
         - name: ISTIO_CPU_LIMIT
           valueFrom:
             resourceFieldRef:
+              divisor: '0'
               resource: limits.cpu
         - name: SERVICE_ACCOUNT
           valueFrom:
