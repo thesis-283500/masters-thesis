@@ -76,3 +76,13 @@ jobs:
               --create-namespace 
 
           kubectl apply -f changed-app-secret.yaml
+
+      - name: Install Argocd apps
+        run: |
+          until kubectl apply -n argocd -k argocd/overlaysapplications/; do
+            echo "Waiting for Argo CD to be ready ..."
+            sleep 5
+          done
+
+          kubectl label ns microservice istio-injection=enabled
+
