@@ -95,5 +95,5 @@ jobs:
           # Once it exists, label it
           echo "Namespace '$NAMESPACE' exists. Applying label..."
           kubectl label ns "$NAMESPACE" istio-injection=enabled --overwrite
-          kubectl -n "$NAMESPACE"" rollout restart deployment
+          kubectl -n "$NAMESPACE" rollout restart deployment
 
