@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    random = {
+      source = "hashicorp/random"
+      ersion = "~> 3.0"
+    }
   }
   backend "s3" {
     bucket       = "tfstate-bucket-283500"

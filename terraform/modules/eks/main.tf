@@ -5,14 +5,12 @@ provider "aws" {
   region = var.region
 }
 
-provider "random" {}
-
 # Generate a random string
 resource "random_string" "role_name" {
   length  = 16
   upper   = true
   lower   = true
-  number  = true
+  numeric  = true
   special = false
 }
 
