@@ -51,6 +51,7 @@ spec:
       port: 80
       group: ''	
       kind: Service
+      weight: 1
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
