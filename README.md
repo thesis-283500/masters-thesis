@@ -38,3 +38,9 @@
 ```BASH
     kubectl delete pod <podname> --grace-period=0 --force --namespace <namespace>
 ```
+
+- Get argocd default password
+
+```BASH
+    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
