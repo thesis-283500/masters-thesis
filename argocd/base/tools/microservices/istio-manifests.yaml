@@ -39,13 +39,18 @@ metadata:
 spec:
   parentRefs:
   - name: istio-gateway
+    group: gateway.networking.k8s.io	
+    kind: Gateway
   rules:
   - matches:
     - path:
+        type: PathPrefix
         value: /
     backendRefs:
     - name: frontend
       port: 80
+      group: ''	
+      kind: Service
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
