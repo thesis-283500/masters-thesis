@@ -84,5 +84,15 @@ jobs:
             sleep 5
           done
 
-          kubectl label ns microservice istio-injection=enabled
+          NAMESPACE="microservices"
+
+          # Wait until namespace exists
+          until kubectl get namespace "$NAMESPACE" > /dev/null 2>&1; do
+            echo "Waiting for namespace '$NAMESPACE' to be created..."
+            sleep 5
+          done
+
+          # Once it exists, label it
+          echo "Namespace '$NAMESPACE' exists. Applying label..."
+          kubectl label ns "$NAMESPACE" istio-injection=enabled --overwrite
 
