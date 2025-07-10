@@ -79,7 +79,7 @@ jobs:
 
       - name: Install Argocd apps
         run: |
-          until kubectl apply -n argocd -k argocd/overlaysapplications/; do
+          until kubectl apply -n argocd -k argocd/overlays/applications/; do
             echo "Waiting for Argo CD to be ready ..."
             sleep 5
           done
