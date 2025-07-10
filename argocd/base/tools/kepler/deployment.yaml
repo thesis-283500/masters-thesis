@@ -189,7 +189,7 @@ spec:
     spec:
       containers:
       - args:
-        - /usr/bin/kepler -v=1 -redfish-cred-file-path=/etc/redfish/redfish.csv
+        - /usr/bin/kepler -redfish-cred-file-path=/etc/redfish/redfish.csv
         command:
         - /bin/sh
         - -c
