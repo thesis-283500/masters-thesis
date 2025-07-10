@@ -10,7 +10,7 @@ resource "random_string" "role_name" {
   length  = 16
   upper   = true
   lower   = true
-  numeric  = true
+  numeric = true
   special = false
 }
 
