@@ -67,7 +67,6 @@ jobs:
           export INSTALLATION_ID=$(echo "${{ secrets.INSTALLATION_ID }}" | base64 -w 0)
           export PRIVATE_KEY=$(echo "${{ secrets.APP_PRIVATE_KEY }}" | base64 -w 0)
           envsubst < app-secret.yaml > changed-app-secret.yaml
-          cat changed-app-secret.yaml
 
           helm repo add argo https://argoproj.github.io/argo-helm
           helm repo update
@@ -91,9 +90,4 @@ jobs:
             echo "Waiting for namespace '$NAMESPACE' to be created..."
             sleep 5
           done
-
-          # Once it exists, label it
-          echo "Namespace '$NAMESPACE' exists. Applying label..."
-          kubectl label ns "$NAMESPACE" istio-injection=enabled --overwrite
-          kubectl -n "$NAMESPACE" rollout restart deployment
 
